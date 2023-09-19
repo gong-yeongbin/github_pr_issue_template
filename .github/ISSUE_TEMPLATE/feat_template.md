@@ -1,7 +1,7 @@
 ---
 name: Issue Template
 about: 이슈 템플릿
-title: "타이틀 테스트"
+title: "타이틀 테스트123:"
 ---
 
 ## description
