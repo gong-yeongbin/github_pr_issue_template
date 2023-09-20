@@ -1,0 +1,46 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+
+      - name: setup node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json' }}
+          restore-keys: |
+            ${{ runner.os }}-node
+
+      - name: install dependencies
+        if: steps.cache.outputs.cache.cache-hint != 'true'
+        run: npm ci
+
+      - name: run test
+        run: npm run test:e2e
+
+      - name: run lint
+        run: npm run lint
+
+      - name: run format
+        run: npm run format
